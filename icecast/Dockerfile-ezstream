@@ -1,0 +1,5 @@
+FROM debian:latest
+
+RUN apt update && apt install -y lame madplay ezstream
+
+CMD /usr/bin/ezstream -c /etc/ezstream.xml
