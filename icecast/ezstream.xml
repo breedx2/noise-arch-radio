@@ -128,13 +128,13 @@
         Media type: autodetect, file, playlist, program, stdin
        (default: autodetect)
         -->
-      <type>file</type>
+      <type>program</type>
 
       <!-- Input file, program name, or "stdin" keyword (deprecated) -->
-      <filename>/data/noise-arch_sr-hareal/sr-hareal_1.mp3</filename>
+      <filename>/playlist-program.sh</filename>
 
       <!-- Shuffle playlists (default: no) -->
-      <shuffle>Yes</shuffle>
+      <!-- <shuffle>Yes</shuffle> -->
 
       <!-- Stream intake indefinitely or only once (default: no) -->
       <stream_once>Yes</stream_once>

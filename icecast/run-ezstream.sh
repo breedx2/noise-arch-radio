@@ -16,7 +16,7 @@ else
 	docker run -it --rm \
 		-v ${MYDIR}/env.sh:/env.sh \
 		-v ${MYDIR}/ezstream.xml:/etc/ezstream.xml.template \
-		-v ${MYDIR}/data:/data \
+		-v ${MYDIR}/../data:/data \
 		--name ezstream \
 		ezstream 
 fi

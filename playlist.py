@@ -1,6 +1,7 @@
 import os
 import random
 import json
+from download_item import download_item
 
 # outputs the next playlist filename while maintaining the playlist.
 # playlist is a text file, one identifier per line
@@ -67,19 +68,25 @@ def pop_next_file():
 if not os.path.exists(PLAYLIST_FILE):
   generate_playlist()
 
-if not os.path.exists(PLAYLIST_NEXT):
+if os.path.exists(PLAYLIST_NEXT):
+  pass
+else:
   item = pop_playlist()
   with open(PLAYLIST_ITEM, 'wt') as file:
     file.write(item)
 
   meta = read_meta(item)
   audio = audio_files(meta)
-  audio_files = sorted([f'data/{item}/{x["name"]}' for x in audio])
+  audio_files = sorted([f'data/items/{item}/{x["name"]}' for x in audio])
   # print(audio_files)
   with open(PLAYLIST_NEXT, 'wt') as file:
     file.write('\n'.join(audio_files))
+
+  download_item(item)
 
 filename = pop_next_file()
 with open(PLAYLIST_CURFILE, 'wt') as file:
   file.write(filename)
 print(filename)
+
+# TODO: Ensure next 3 downloaded in the hopper
