@@ -4,4 +4,4 @@ RUN apt update && apt install -y lame madplay ezstream
 
 ADD run-ezstream.sh /run-ezstream.sh
 
-CMD /usr/bin/ezstream -c /etc/ezstream.xml
+CMD /run-ezstream.sh
