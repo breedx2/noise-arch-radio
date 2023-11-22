@@ -9,6 +9,7 @@ if [ -e /.dockerenv ]; then
 	sed -i -e "s/_ICECAST_HOSTNAME_/${ICECAST_HOSTNAME}/" /etc/ezstream.xml
 	sed -i -e "s/_ICECAST_CLIENT_USER_/${ICECAST_CLIENT_USER}/" /etc/ezstream.xml
 	sed -i -e "s/_ICECAST_CLIENT_PASS_/${ICECAST_CLIENT_PASS}/" /etc/ezstream.xml
+	chmod 600 /etc/ezstream.xml
 	/usr/bin/ezstream -c /etc/ezstream.xml
 else
 	# on host
