@@ -4,7 +4,7 @@ import os
 import sys
 import urllib.request
 
-def download_item(id):
+def download_item(id, quiet = False):
   meta_file = f'data/meta/{id}.json'
   file = open(meta_file, 'rt')
   meta = json.load(file)
@@ -28,10 +28,12 @@ def download_item(id):
           sha = hashlib.file_digest(f, 'sha1').hexdigest()
 
       if file['sha1'] == sha:
-        print(f'{outfile} exists and sha matches, skipping download')
+        if not quiet:
+          print(f'{outfile} exists and sha matches, skipping download')
         continue
 
-    print(f'fetching {id} :: {file["name"]}')
+    if not quiet:
+      print(f'fetching {id} :: {file["name"]}')
     urllib.request.urlretrieve(url, outfile)
 
 

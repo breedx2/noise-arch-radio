@@ -82,7 +82,7 @@ else:
   with open(PLAYLIST_NEXT, 'wt') as file:
     file.write('\n'.join(audio_files))
 
-  download_item(item)
+  download_item(item, quiet = True)
 
 filename = pop_next_file()
 with open(PLAYLIST_CURFILE, 'wt') as file:
