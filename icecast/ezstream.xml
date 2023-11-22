@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ezstream>
+
+  <!--
+    Server configuration
+    -->
+  <servers>
+    <server>
+      <!-- Identifying name (default: "default") -->
+      <name>noise-arch</name>
+
+      <!--
+        Transport protocol:
+        HTTP (default), HTTPS (implies <tls>required</tls>), ICY, RoarAudio
+        -->
+      <protocol>HTTP</protocol>
+      <!-- Server address -->
+      <hostname>_ICECAST_HOSTNAME_</hostname>
+      <!-- Server port (default: 8000) -->
+      <port>9123</port>
+
+      <!-- Login user (default: "source") -->
+      <user>_ICECAST_CLIENT_USER_</user>
+      <password>_ICECAST_CLIENT_PASS_</password>
+
+      <!--
+        Configure TLS requirement: none, may, required (default: "may")
+
+        For compatibility reasons, the default configuration and this example
+        is "may". THIS IS INSECURE. It allows a MitM to intercept the
+        password and tamper with the stream. It is recommended to set this to
+        "required" when configuring TLS to secure streaming over untrusted
+        networks.
+        -->
+      <tls>May</tls>
+
+      <!--
+        Configure allowed cipher suites for TLS other than the libshout
+        default.
+        See openssl(1)/ciphers(1) for details.
+        -->
+      <tls_cipher_suite>HIGH:!RSA:!SHA:!DH:!aNULL:!eNULL:!TLSv1</tls_cipher_suite>
+
+      <!--
+        Directory to use for server certificate verification in "hash format".
+        See openssl(1)/verify(1) for details.
+
+        One of the <ca_dir /> or <ca_file /> settings must be enabled for
+        certificate verification to succeed.
+        -->
+      <!-- <ca_dir>/etc/ssl/certs</ca_dir> -->
+
+      <!--
+        CA bundle for both server certificate verification and building the
+        client certificate chain.
+
+        One of the <ca_dir /> or <ca_file /> settings must be enabled for
+        certificate verification to succeed.
+        -->
+      <!-- <ca_file>/etc/ssl/certs/ca-certificates.crt</ca_file> -->
+
+      <!--
+        X.503 client certificate, in PEM format, containing both certificate
+        (with public key) and private key in the same file, for
+        authentication.
+        -->
+      <!-- <client_cert>/etc/ssl/private/ezstream.crt</client_cert> -->
+
+      <!-- Number of reconnection attempts, before giving up (default: 0) -->
+      <reconnect_attempts>20</reconnect_attempts>
+    </server>
+  </servers>
+
+  <!--
+    Stream configuration
+    -->
+  <streams>
+    <stream>
+      <!--
+        Identifying name (default: "default")
+
+        NB: Only the "default" stream is supported at this point.
+        -->
+      <!-- <name>default</name> -->
+
+      <!-- Mount point on server -->
+      <mountpoint>/noise-arch</mountpoint>
+
+      <!-- Name of the intake entry to use (default: "default") -->
+      <intake>noise-arch</intake>
+
+      <!-- Name of the server entry to use (default: "default") -->
+      <server>noise-arch</server>
+
+      <!--
+        Setting to allow stream to be listed in public YP directory
+        (default: no)
+        -->
+      <public>No</public>
+
+      <!-- Stream format: Ogg, MP3, WebM, Matroska -->
+      <format>MP3</format>
+
+      <!-- Encoder name (defined below) to use for (re)encoding -->
+      <encoder>Lame-V1</encoder>
+
+      <!-- Various other informational settings -->
+      <stream_name>noise-arch</stream_name>
+      <stream_url>http://_ICECAST_HOSTNAME_:9123/noise-arch</stream_url>
+      <stream_genre>noise/cassettes</stream_genre>
+      <stream_description>Streaming radio based on https://archive.org/details/noise-arch</stream_description>
+      <stream_quality>1</stream_quality>
+      <stream_bitrate>16</stream_bitrate>
+      <stream_samplerate>44100</stream_samplerate>
+      <stream_channels>2</stream_channels>
+    </stream>
+  </streams>
+
+  <!--
+    Intake configuration
+    -->
+  <intakes>
+    <intake>
+      <!-- Identifying name (default: "default") -->
+      <name>noise-arch</name>
+
+      <!--
+        Media type: autodetect, file, playlist, program, stdin
+       (default: autodetect)
+        -->
+      <type>file</type>
+
+      <!-- Input file, program name, or "stdin" keyword (deprecated) -->
+      <filename>/data/noise-arch_sr-hareal/sr-hareal_1.mp3</filename>
+
+      <!-- Shuffle playlists (default: no) -->
+      <shuffle>Yes</shuffle>
+
+      <!-- Stream intake indefinitely or only once (default: no) -->
+      <stream_once>Yes</stream_once>
+
+      <!-- Search for files relative to the playlist location (default: no) -->
+      <rel_to_list>Yes</rel_to_list>
+    </intake>
+  </intakes>
+
+  <!--
+    Metadata configuration
+    -->
+  <metadata>
+    <!-- Program to query for metadata instead of from media files -->
+    <!-- <program>meta.sh</program> -->
+
+    <!-- Metadata format -->
+    <format_str>@a@ - @t@</format_str>
+
+    <!-- Interval for additional metadata refreshes (default: -1 (none)) -->
+    <refresh_interval>-1</refresh_interval>
+
+    <!-- Setting to clean up extraneous whitespace (default: no) -->
+    <normalize_strings>Yes</normalize_strings>
+
+    <!-- Setting to suppress all metadata udpates (default: no) -->
+    <no_updates>Yes</no_updates>
+  </metadata>
+
+  <!--
+    Decoder configurations
+    -->
+  <decoders>
+    <decoder>
+      <!-- Decoder name -->
+      <name>OggDec</name>
+      <!-- Program and options -->
+      <program>oggdec -R -b 16 -o - @T@</program>
+      <!-- File extensions to use this decoder for -->
+      <file_ext>.ogg</file_ext>
+      <file_ext>.oga</file_ext>
+    </decoder>
+
+    <decoder>
+      <name>MadPlay</name>
+      <program>madplay -b 16 -R 44100 -S -o raw:- @T@</program>
+      <file_ext>.mp3</file_ext>
+    </decoder>
+
+    <decoder>
+      <name>Flac</name>
+      <program>flac -s -d --force-raw-format --sign=signed --endian=little -o - @T@</program>
+      <file_ext>.flac</file_ext>
+    </decoder>
+
+    <decoder>
+      <name>AAC</name>
+      <program>faad -d -f 2 -w @T@</program>
+      <file_ext>.m4a</file_ext>
+    </decoder>
+
+    <decoder>
+      <name>Opus</name>
+      <program>opusdec --rate 44100 @T@ -</program>
+      <file_ext>.opus</file_ext>
+    </decoder>
+  </decoders>
+
+  <!--
+    Encoder configurations
+    -->
+  <encoders>
+    <encoder>
+      <!-- Encoder name -->
+      <name>OggEnc-Q1.5</name>
+      <!-- Output stream format -->
+      <format>Ogg</format>
+      <!-- Program and options -->
+      <program>oggenc -r -B 16 -C 2 -R 44100 --raw-endianness 0 -q 1.5 -t @M@ -</program>
+    </encoder>
+
+    <encoder>
+      <name>Opus-VBR96</name>
+      <format>Ogg</format>
+      <program>opusenc --vbr --bitrate 96 --title @t@ --artist @a@ --raw --raw-rate 44100 - -</program>
+    </encoder>
+
+    <encoder>
+      <name>Lame-CBR128</name>
+      <format>MP3</format>
+      <program>lame --preset cbr 128 -r -s 44.1 --bitwidth 16 - -</program>
+    </encoder>
+
+    <encoder>
+      <name>Lame-V1</name>
+      <format>MP3</format>
+      <program>lame -V 1 -r -s 44.1 --bitwidth 16 - -</program>
+    </encoder>
+  </encoders>
+
+</ezstream>
+
