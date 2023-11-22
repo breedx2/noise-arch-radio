@@ -2,7 +2,7 @@ FROM debian:latest
 
 RUN apt update && apt install -y python3 lame madplay ezstream
 
-ADD run-ezstream.sh /run-ezstream.sh
+ADD run-ezstream.sh download_ahead.sh /
 ADD playlist.py download_item.py /
 ADD playlist-program.sh /
 
