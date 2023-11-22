@@ -1,6 +1,9 @@
 import os
 import random
 import json
+# import subprocess
+from multiprocessing import Process
+import sys
 from download_item import download_item
 
 # outputs the next playlist filename while maintaining the playlist.
@@ -42,6 +45,11 @@ def pop_playlist():
       file.write('\n'.join(lines[1:]))
   return item
 
+def peek_playlist(num):
+  with open(PLAYLIST_FILE, 'rt') as file:
+    lines = file.read().splitlines()
+  return lines[0:num]
+
 def original_files(meta):
   return [x for x in meta['files'] if x['source'] == 'original']
 
@@ -63,30 +71,58 @@ def pop_next_file():
       file.write('\n'.join(lines[1:]))
   return lines[0]
 
-## __main__ 
+def download_ahead(num = 3):
+  ahead = peek_playlist(num)
+  for item in ahead:
+    download_item(item, quiet = True)
 
-if not os.path.exists(PLAYLIST_FILE):
-  generate_playlist()
 
-if os.path.exists(PLAYLIST_NEXT):
-  pass
-else:
-  item = pop_playlist()
-  with open(PLAYLIST_ITEM, 'wt') as file:
-    file.write(item)
+if __name__ == '__main__':
+  if not os.path.exists(PLAYLIST_FILE):
+    generate_playlist()
 
-  meta = read_meta(item)
-  audio = audio_files(meta)
-  audio_files = sorted([f'data/items/{item}/{x["name"]}' for x in audio])
-  # print(audio_files)
-  with open(PLAYLIST_NEXT, 'wt') as file:
-    file.write('\n'.join(audio_files))
+  if not os.path.exists(PLAYLIST_NEXT):
+    item = pop_playlist()
+    with open(PLAYLIST_ITEM, 'wt') as file:
+      file.write(item)
 
-  download_item(item, quiet = True)
+    meta = read_meta(item)
+    audio = audio_files(meta)
+    audio_files = sorted([f'data/items/{item}/{x["name"]}' for x in audio])
+    # print(audio_files)
+    with open(PLAYLIST_NEXT, 'wt') as file:
+      file.write('\n'.join(audio_files))
 
-filename = pop_next_file()
-with open(PLAYLIST_CURFILE, 'wt') as file:
-  file.write(filename)
-print(filename)
+    download_item(item, quiet = True)
 
-# TODO: Ensure next 3 downloaded in the hopper
+  filename = pop_next_file()
+  with open(PLAYLIST_CURFILE, 'wt') as file:
+    file.write(filename)
+  print(filename)
+
+  ahead = peek_playlist(3)
+  os.spawnv(os.P_NOWAIT, '/usr/bin/python3', ['/usr/bin/python3', 'download_item.py', ahead[0]])
+
+  # pid = os.fork()
+  # if pid == 0:
+  #   download_ahead()
+  # else:
+  #   sys.exit(0)
+
+  # Ensure next 3 downloaded in the hopper
+  # ahead = peek_playlist(3)
+
+  # call1 = Process(target=download_ahead)
+  # call1.fork()
+  # sys.exit(0)
+
+
+# for item in ahead:
+#   subprocess.run(["python3", "download_item.py", item])
+
+# pid = os.fork()
+# if pid == 0: # child process
+  # Ensure next 3 downloaded in the hopper
+  # ahead = peek_playlist(3)
+  # [download_item(item, quiet = True) for item in ahead]
+  # sys.exit(0)
