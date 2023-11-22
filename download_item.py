@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import sys
 import urllib.request
 
 def download_item(id):
@@ -35,5 +36,8 @@ def download_item(id):
 
 
 if __name__ == '__main__':
-  identifier = 'noise-arch_varfa-unk'
+  if len(sys.argv) <= 1:
+    print('Argument required (identifier)')
+    sys.exit(1)
+  identifier = sys.argv[1]
   download_item(identifier)
