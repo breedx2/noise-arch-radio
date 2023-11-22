@@ -5,7 +5,7 @@ import sys
 import urllib.request
 
 def download_item(id):
-  meta_file = f'data/meta/{identifier}.json'
+  meta_file = f'data/meta/{id}.json'
   file = open(meta_file, 'rt')
   meta = json.load(file)
   file.close()
