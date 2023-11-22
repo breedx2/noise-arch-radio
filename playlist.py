@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import random
 import json
@@ -13,6 +14,7 @@ PLAYLIST_FILE = 'data/playlist'
 PLAYLIST_ITEM = 'data/playlist.item'
 PLAYLIST_CURFILE = 'data/playlist.curfile'
 PLAYLIST_NEXT = 'data/playlist.nextfiles'
+LOGFILE = 'data/playlist.log'
 
 def list_all_items():
   file_list = os.listdir('data/meta')
@@ -25,6 +27,7 @@ def read_meta(id):
 
 # create a new randomized playlist from metadata items
 def generate_playlist():
+  log('Generating a brand new playlist.')
   items = list_all_items()
   random.shuffle(items)
   with open(PLAYLIST_FILE, 'wt') as out:
@@ -41,6 +44,7 @@ def pop_playlist():
     # remove to regenerate for next time
     os.remove(PLAYLIST_FILE)
   else:
+    log(f'Playlist has {len(lines)-1} items remaining.')
     with open(PLAYLIST_FILE, 'wt') as file:
       file.write('\n'.join(lines[1:]))
   return item
@@ -60,6 +64,11 @@ def audio_files(meta):
   originals = original_files(meta)
   return [x for x in originals if is_audio_format(x['format'])]
 
+def log(msg):
+  ts = datetime.now().replace(microsecond=0).isoformat()
+  with open(LOGFILE, 'at') as file:
+    file.write(f'{ts} : {msg}\n')
+
 def pop_next_file():
   with open(PLAYLIST_NEXT, 'rt') as file:
     lines = file.read().splitlines()
@@ -77,6 +86,7 @@ if __name__ == '__main__':
 
   if not os.path.exists(PLAYLIST_NEXT):
     item = pop_playlist()
+    log(f'Beginning next item: {item}')
     with open(PLAYLIST_ITEM, 'wt') as file:
       file.write(item)
 
@@ -92,5 +102,6 @@ if __name__ == '__main__':
   filename = pop_next_file()
   with open(PLAYLIST_CURFILE, 'wt') as file:
     file.write(filename)
+
+  log(f'Starting playback of file {filename}')
   print(filename)
-  
