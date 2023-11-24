@@ -2,9 +2,9 @@ from datetime import datetime
 import os
 import random
 import json
-# import subprocess
 from multiprocessing import Process
 import sys
+import time
 from download_item import download_item
 
 # outputs the next playlist filename while maintaining the playlist.
@@ -14,6 +14,7 @@ PLAYLIST_FILE = 'data/playlist'
 PLAYLIST_ITEM = 'data/playlist.item'
 PLAYLIST_CURFILE = 'data/playlist.curfile'
 PLAYLIST_NEXT = 'data/playlist.nextfiles'
+PLAYING_FILE = 'data/playing.json'
 LOGFILE = 'data/playlist.log'
 
 def list_all_items():
@@ -24,6 +25,11 @@ def list_all_items():
 def read_meta(id):
   with open(f'data/meta/{id}.json', 'rt') as file:
     return json.load(file)
+
+def read_current_meta():
+  with open(PLAYLIST_ITEM, 'rt') as file:
+    item = file.read()
+  return read_meta(item)
 
 # create a new randomized playlist from metadata items
 def generate_playlist():
@@ -80,10 +86,17 @@ def pop_next_file():
       file.write('\n'.join(lines[1:]))
   return lines[0]
 
+def write_playing(meta, filename):
+  with open(PLAYING_FILE, 'wt') as file:
+    meta['start'] = time.time()
+    meta['file'] = os.path.basename(filename)
+    file.write(json.dumps(meta, indent=2))
+
 if __name__ == '__main__':
   if not os.path.exists(PLAYLIST_FILE):
     generate_playlist()
 
+  meta = None
   if not os.path.exists(PLAYLIST_NEXT):
     # todo: remove current item from disk to save space
     item = pop_playlist()
@@ -103,6 +116,10 @@ if __name__ == '__main__':
   filename = pop_next_file()
   with open(PLAYLIST_CURFILE, 'wt') as file:
     file.write(filename)
+
+  if meta is None:
+    meta = read_current_meta()
+  write_playing(meta, filename)
 
   log(f'Starting playback of file {filename}')
   print(filename)
