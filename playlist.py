@@ -85,6 +85,7 @@ if __name__ == '__main__':
     generate_playlist()
 
   if not os.path.exists(PLAYLIST_NEXT):
+    # todo: remove current item from disk to save space
     item = pop_playlist()
     log(f'Beginning next item: {item}')
     with open(PLAYLIST_ITEM, 'wt') as file:

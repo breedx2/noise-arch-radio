@@ -13,8 +13,8 @@ if [ -e /.dockerenv ]; then
 	/usr/bin/ezstream -c /etc/ezstream.xml
 else
 	# on host
-	#docker run --detach \
-	docker run -it --rm \
+	# docker run -it --rm \
+	docker run --detach \
 		-v ${MYDIR}/env.sh:/env.sh \
 		-v ${MYDIR}/ezstream.xml:/etc/ezstream.xml.template \
 		-v ${MYDIR}/../data:/data \
