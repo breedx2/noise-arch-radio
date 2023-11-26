@@ -76,14 +76,19 @@ def log(msg):
     file.write(f'{ts} : {msg}\n')
 
 def pop_next_file():
+  log('pop_next_file()')
   with open(PLAYLIST_NEXT, 'rt') as file:
     lines = file.read().splitlines()
+  log(f'  lines: {lines}')
   if len(lines) == 1:
     # remove to regen next time
     os.remove(PLAYLIST_NEXT)
+    log('  playlist now empty, itemfile removed')
   else:
     with open(PLAYLIST_NEXT, 'wt') as file:
-      file.write('\n'.join(lines[1:]))
+      joined = '\n'.join(lines[1:])
+      log('  re-joined: {joined}')
+      file.write(joined)
   return lines[0]
 
 def write_playing(meta, filename):
@@ -108,6 +113,7 @@ if __name__ == '__main__':
     audio = audio_files(meta)
     audio_files = sorted([f'data/items/{item}/{x["name"]}' for x in audio])
 
+    log(f'Writing audio_files to {PLAYLIST_NEXT}: {audio_files}')
     with open(PLAYLIST_NEXT, 'wt') as file:
       file.write('\n'.join(audio_files))
 
