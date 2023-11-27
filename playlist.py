@@ -72,8 +72,9 @@ def audio_files(meta):
 
 def log(msg):
   ts = datetime.now().replace(microsecond=0).isoformat()
+  pid = os.getpid()
   with open(LOGFILE, 'at') as file:
-    file.write(f'{ts} : {msg}\n')
+    file.write(f'{ts} [{pid}]: {msg}\n')
 
 def pop_next_file():
   log('pop_next_file()')
@@ -87,7 +88,7 @@ def pop_next_file():
   else:
     with open(PLAYLIST_NEXT, 'wt') as file:
       joined = '\n'.join(lines[1:])
-      log('  re-joined: {joined}')
+      log(f'  re-joined: {joined}')
       file.write(joined)
   return lines[0]
 
@@ -98,6 +99,7 @@ def write_playing(meta, filename):
     file.write(json.dumps(meta, indent=2))
 
 if __name__ == '__main__':
+  log('playlist.py invoked')
   if not os.path.exists(PLAYLIST_FILE):
     generate_playlist()
 
