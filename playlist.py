@@ -128,4 +128,4 @@ if __name__ == '__main__':
   write_playing(meta, filename)
 
   log(f'Starting playback of file {filename}')
-  print(f'{filename}\n')
+  print(f'{filename}')
