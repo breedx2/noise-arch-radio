@@ -6,9 +6,8 @@ import urllib.request
 
 def download_item(id, quiet = False):
   meta_file = f'data/meta/{id}.json'
-  file = open(meta_file, 'rt')
-  meta = json.load(file)
-  file.close()
+  with open(meta_file, 'rt') as file:
+    meta = json.load(file)
 
   originals = [x for x in meta['files'] if x['source'] == 'original']
 
