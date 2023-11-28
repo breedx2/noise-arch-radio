@@ -137,10 +137,10 @@
       <!-- <shuffle>Yes</shuffle> -->
 
       <!-- Stream intake indefinitely or only once (default: no) -->
-      <stream_once>Yes</stream_once>
+      <stream_once>No</stream_once>
 
       <!-- Search for files relative to the playlist location (default: no) -->
-      <rel_to_list>Yes</rel_to_list>
+      <rel_to_list>No</rel_to_list>
     </intake>
   </intakes>
 
