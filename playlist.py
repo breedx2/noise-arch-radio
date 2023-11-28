@@ -1,4 +1,3 @@
-from datetime import datetime
 import os
 import random
 import json
@@ -6,6 +5,7 @@ from multiprocessing import Process
 import sys
 import time
 from download_item import download_item
+from log import log
 
 # outputs the next playlist filename while maintaining the playlist.
 # playlist is a text file, one identifier per line
@@ -15,7 +15,6 @@ PLAYLIST_ITEM = 'data/playlist.item'
 PLAYLIST_CURFILE = 'data/playlist.curfile'
 PLAYLIST_NEXT = 'data/playlist.nextfiles'
 PLAYING_FILE = 'data/playing.json'
-LOGFILE = 'data/playlist.log'
 
 def list_all_items():
   file_list = os.listdir('data/meta')
@@ -46,8 +45,10 @@ def pop_playlist():
   with open(PLAYLIST_FILE, 'rt') as file:
     lines = file.read().splitlines()
   item = lines[0]
+  log(f'pop_playlist() read item {item}')
   if len(lines) == 1:
     # remove to regenerate for next time
+    log(f'Removing playlist file to regenerate next time')
     os.remove(PLAYLIST_FILE)
   else:
     log(f'Playlist has {len(lines)-1} items remaining.')
@@ -55,10 +56,10 @@ def pop_playlist():
       file.write('\n'.join(lines[1:]))
   return item
 
-def peek_playlist(num):
-  with open(PLAYLIST_FILE, 'rt') as file:
-    lines = file.read().splitlines()
-  return lines[0:num]
+# def peek_playlist(num):
+#   with open(PLAYLIST_FILE, 'rt') as file:
+#     lines = file.read().splitlines()
+#   return lines[0:num]
 
 def original_files(meta):
   return [x for x in meta['files'] if x['source'] == 'original']
@@ -70,16 +71,12 @@ def audio_files(meta):
   originals = original_files(meta)
   return [x for x in originals if is_audio_format(x['format'])]
 
-def log(msg):
-  ts = datetime.now().replace(microsecond=0).isoformat()
-  pid = os.getpid()
-  with open(LOGFILE, 'at') as file:
-    file.write(f'{ts} [{pid}]: {msg}\n')
-
 def pop_next_file():
   log('pop_next_file()')
   with open(PLAYLIST_NEXT, 'rt') as file:
-    lines = file.read().splitlines()
+    allfile = file.read()
+    log(f'  nextfile content: {allfile}')
+    lines = allfile.splitlines()
   log(f'  lines: {lines}')
   if len(lines) == 1:
     # remove to regen next time
@@ -105,6 +102,7 @@ if __name__ == '__main__':
 
   meta = None
   if not os.path.exists(PLAYLIST_NEXT):
+    log(f'No nextfiles, popping playlist...')
     # todo: remove current item from disk to save space
     item = pop_playlist()
     log(f'Beginning next item: {item}')
@@ -130,4 +128,4 @@ if __name__ == '__main__':
   write_playing(meta, filename)
 
   log(f'Starting playback of file {filename}')
-  print(filename)
+  print(f'{filename}\n')
