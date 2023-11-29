@@ -1,0 +1,25 @@
+
+#playing-title a {
+  text-decoration: none;
+}
+
+#progressbar {
+  height: 35px;
+}
+
+#progressbar-value {
+  text-color: white;
+  background-color: #423529;
+}
+
+#stopbutton {
+  display: none;
+}
+
+.playicon {
+  color: white;
+}
+
+.coverimg {
+  max-height: 300px;
+}
