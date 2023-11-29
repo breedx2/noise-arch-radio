@@ -81,7 +81,7 @@ def pop_next_file():
   if len(lines) == 1:
     # remove to regen next time
     os.remove(PLAYLIST_NEXT)
-    log('  playlist now empty, itemfile removed')
+    log('  playlist now empty, nextfile removed')
   else:
     with open(PLAYLIST_NEXT, 'wt') as file:
       joined = '\n'.join(lines[1:])
