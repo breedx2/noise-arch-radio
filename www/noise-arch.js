@@ -40,9 +40,13 @@ function timeIntoFile(playing){
   return delta;
 }
 
+// Returns time in seconds until end of file (approx)
+function timeRemaining(playing){
+  return playingFile.length - timeIntoFile(playing);
+}
+
 function percentIntoFile(playing){
-  const epochSec = Date.now()/1000.0;
-  const delta = epochSec - playing.start;
+  const delta = timeIntoFile(playing);
   const playingFile = playing.files.find(file => file.name == playing.file);
   return 100.0 * delta / playingFile.length;
 }
@@ -65,6 +69,7 @@ function hms(t){
 
 var playing;
 var progressTimer;
+var rolloverChecker = null;
 
 function updateProgress(playing){
   const progressTime = timeIntoFile(playing);
@@ -72,11 +77,19 @@ function updateProgress(playing){
   // TODO: If it's too low, we probably need to start our frequent polly poller
   document.getElementById('progressbar-value').innerText = hms(progressTime);
   document.getElementById('progressbar-value').style.width = `${percentIntoFile(playing)}%`;
+
+  if((timeRemaining(playing) < 1) && !rolloverChecker){
+    console.log('Need to poll now for new stuff...');
+    rolloverChecker = setTimeout({
+      
+    }, 1000);
+  }
+
 }
 
 function setupProgress(playing){
   const playingFile = playing.files.find(file => file.name == playing.file);
-  console.log(`progress for ${playingFile}`);
+  console.log(`progress for ${playingFile.name}`);
   const prog = document.getElementById('progressbar');
   prog.setAttribute('aria-valuemax', parseFloat(playingFile.length));
   console.log(`file is ${hms(playingFile.length)}`)
@@ -86,6 +99,22 @@ function setupProgress(playing){
   setInterval(() => {
     updateProgress(playing);
   }, 333);
+}
+
+function isAudioFile(file){
+  return ['mp3', 'ogg', 'wav'].some(ext => file.format.toLowerCase().includes(ext))
+}
+
+function updatePlayingFile(playing){
+  const playingFile = playing.files.find(file => file.name === playing.file);
+  const audioFiles = playing.files
+                        .filter(file => file.source === 'original')
+                        .filter(isAudioFile)
+                        .map(file => file.name);
+  const pos = audioFiles.indexOf(playingFile.name) + 1;
+                        
+  const playingText = `Playing ${pos} of ${audioFiles.length}: ${playingFile.name}`;
+  document.getElementById('playing-file').innerText = playingText;
 }
 
 function startPlayback(){
@@ -115,6 +144,7 @@ nowPlaying().then(playing => {
   a.target = '_blank';
   a.href = `https://archive.org/details/${item}`;
   document.getElementById('playing-title').appendChild(a);
+  updatePlayingFile(playing);  
   addArtwork(playing);
   setupProgress(playing);
 });
