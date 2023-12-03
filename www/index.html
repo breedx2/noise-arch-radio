@@ -10,9 +10,16 @@
   <body>
     <div class="container text-center">
       <div class="row">
-        <div class="col">
-          <img src="logo.png" title="noise-arch radio" class="mt-5 img-fluid"/>
-        </div>
+          <div class="col-lg-1"></div>
+          <div class="col-lg-10">
+            <img src="logo.png" title="noise-arch radio" class="mt-5 img-fluid"/>
+          </div>
+          <div class="col-lg-1 d-flex align-items-center">
+            <!-- Button trigger modal -->
+            <a id="about" href="#" type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#aboutModal">
+              <i class="bi-info-circle-fill fs-3 playicon text-secondary"></i>
+            </a>
+          </div>
       </div>
       <div class="row mb-5">
         <div class="col">
@@ -42,10 +49,48 @@
             <div id='progressbar-value' class="progress-bar overflow-visible ps-1" style="width: 25%"></div>
           </div>
         </div>
-        <div id="duration" class="col col-lg-1 small d-flex align-items-center">
-            12:34:56
+        <div class="col col-lg-1 small d-flex align-items-center">
+            <span id="duration">12:34:56</span>
+            <i class="bi-file-person ms-3 fs-4"></i>
+            <span id="listeners">_</span>
         </div>
       </div>
+      
+      
+      <!-- Modal -->
+      <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="aboutModalLabel">About noise-arch radio</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-start">
+              <p>
+                noise-arch radio provides a continuous audio stream of shuffled items
+                in the <a href="https://archive.org/details/noise-arch">noise-arch archive</a>
+                of cassette tapes. 
+              </p>
+              <p>
+                There are 384 items with audio in the collection. Many of the cassettes are 60 or 90 minutes.
+                The collection is described as such:
+              </p>
+              <div class="card mb-3">
+                <div class="card-body">
+                  This collection is a compilation of underground, independently released cassette tapes from the days when the audio cassette was the standard method of music sharing... generally the mid-eighties through early-nineties. The material represented includes tape experimentation, industrial, avant-garde, indy, rock, diy, subvertainment and auto-hypnotic materials. Much of this material defies category, and has therefore not been given one.
+                  <br/><br/>
+                  The bulk of the tapes in this library were donated to the project by former CKLN FM radio host Myke Dyer in August of 2009. The original NOISE-ARCH site was hosted and maintained by Graham Stewart and Mark Lougheed.                  
+                </div>
+              </div>
+              created by <a href="mailto:jason@noisybox.net">jason plumb</a>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Got it</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="/noise-arch.js"></script>

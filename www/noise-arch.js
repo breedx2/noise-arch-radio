@@ -1,6 +1,12 @@
 
 console.log('noise-arch radio init.');
 
+// var playing;
+var startTime = 0;
+var progressTimer;
+var listenersTimer = null;
+var rolloverChecker = null;
+
 async function nowPlaying(){
   const response = await fetch("/playing.json");
   return await response.json();
@@ -42,6 +48,7 @@ function timeIntoFile(playing){
 
 // Returns time in seconds until end of file (approx)
 function timeRemaining(playing){
+  const playingFile = playing.files.find(file => file.name == playing.file);
   return playingFile.length - timeIntoFile(playing);
 }
 
@@ -67,10 +74,6 @@ function hms(t){
   return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
 }
 
-var playing;
-var progressTimer;
-var rolloverChecker = null;
-
 function updateProgress(playing){
   const progressTime = timeIntoFile(playing);
   // TODO: If it's negative we need to re-fetch because a new file is probably playing
@@ -80,8 +83,20 @@ function updateProgress(playing){
 
   if((timeRemaining(playing) < 1) && !rolloverChecker){
     console.log('Need to poll now for new stuff...');
-    rolloverChecker = setTimeout({
-      
+    rolloverChecker = setInterval(() => {
+      console.log('Polling for new file...');
+      nowPlaying().then(playing => {
+        if(playing.start !== startTime){
+          console.log('  On to the next file!');
+          clearInterval(rolloverChecker);
+          rolloverChecker = null;
+          startTime = playing.start;
+          updateDisplayFromPlaying(playing);
+        }
+        else {
+          console.log('  No changes')
+        }
+      })
     }, 1000);
   }
 
@@ -95,7 +110,6 @@ function setupProgress(playing){
   console.log(`file is ${hms(playingFile.length)}`)
   console.log(`percent = ${percentIntoFile(playing)}`)
   document.getElementById('duration').innerText = hms(playingFile.length);
-  updateProgress(playing);
   setInterval(() => {
     updateProgress(playing);
   }, 333);
@@ -134,8 +148,7 @@ function stopPlayback(){
   document.getElementById('stopbutton').style.display = 'none';
 }
 
-nowPlaying().then(playing => { 
-  console.log(playing);
+function updateDisplayFromPlaying(playing){
   const item = playing.metadata.identifier;
   const title = playing.metadata.title;
   const a = document.createElement('a');
@@ -147,4 +160,25 @@ nowPlaying().then(playing => {
   updatePlayingFile(playing);  
   addArtwork(playing);
   setupProgress(playing);
+}
+
+async function updateListeners(){
+  const count = await fetchListeners();
+  document.getElementById('listeners').innerText = count;
+}
+
+async function fetchListeners(){
+  const response = await fetch("/status-json.xsl");
+  const doc = await response.json();
+  return doc.icestats.source.listeners;
+}
+
+nowPlaying().then(playing => { 
+  console.log(playing);
+  startTime = playing.start;
+  updateDisplayFromPlaying(playing);
+});
+
+updateListeners().then( _ => {
+  listenersTimer = setInterval(updateListeners, 10000);
 });
