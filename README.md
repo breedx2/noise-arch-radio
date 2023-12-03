@@ -7,5 +7,6 @@ streaming station sourced with archival cassette tape content from
 
 # TODO: 
 
+* fix bug at end of item (rollover issue)
 * link to discogs search
 * recent past plays
