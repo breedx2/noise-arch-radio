@@ -8,7 +8,7 @@ var progressTimer = null;
 var rolloverChecker = null;
 
 async function nowPlaying(){
-  const response = await fetch("/playing.json");
+  const response = await fetch(`/playing.json?cachebust=${Date.now()}`);
   return await response.json();
 }
 
