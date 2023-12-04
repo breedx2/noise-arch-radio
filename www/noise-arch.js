@@ -3,8 +3,8 @@ console.log('noise-arch radio init.');
 
 // var playing;
 var startTime = 0;
-var progressTimer;
 var listenersTimer = null;
+var progressTimer = null;
 var rolloverChecker = null;
 
 async function nowPlaying(){
@@ -83,6 +83,8 @@ function updateProgress(playing){
 
   if((timeRemaining(playing) < 1) && !rolloverChecker){
     console.log('Need to poll now for new stuff...');
+    clearInterval(progressTimer);
+    progressTimer = null;
     rolloverChecker = setInterval(() => {
       console.log('Polling for new file...');
       nowPlaying().then(playing => {
@@ -110,7 +112,7 @@ function setupProgress(playing){
   console.log(`file is ${hms(playingFile.length)}`)
   console.log(`percent = ${percentIntoFile(playing)}`)
   document.getElementById('duration').innerText = hms(playingFile.length);
-  setInterval(() => {
+  progressTimer = setInterval(() => {
     updateProgress(playing);
   }, 333);
 }
