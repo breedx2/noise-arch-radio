@@ -158,7 +158,9 @@ function updateDisplayFromPlaying(playing){
   a.innerText = title.replace(/^NOISE-ARCH: /, '');
   a.target = '_blank';
   a.href = `https://archive.org/details/${item}`;
-  document.getElementById('playing-title').appendChild(a);
+  const titleElem = document.getElementById('playing-title');
+  titleElem.innerHTML = '';
+  titleElem.appendChild(a);
   updatePlayingFile(playing);  
   addArtwork(playing);
   setupProgress(playing);
