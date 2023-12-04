@@ -1,7 +1,7 @@
 
 # noise-arch radio
 
-This is the source that backs [noise-arch radio](http://noise-arch.live), an audio
+This is the source code behind [noise-arch radio](http://noise-arch.live), an audio
 streaming station sourced with archival cassette tape content from 
 [archive.org](https://archive.org/details/noise-arch).
 
