@@ -11,11 +11,15 @@ The cassette archive is described as this:
 >
 >The bulk of the tapes in this library were donated to the project by former CKLN FM radio host Myke Dyer in August of 2009. The original NOISE-ARCH site was hosted and maintained by Graham Stewart and Mark Lougheed.
 
+Infinite thank yous to [The Internet Archive](https://archive.org) for making this 
+material available and for preserving rare media forever.
+
 # TODO: 
 
-Maybe do these at some point:
+Maybe do these at some point (or at least convert them to issues):
 
 * link to discogs search
+* blocklist for dumb items
 * recent past plays
 * enable https
 * normalize volume
