@@ -24,6 +24,7 @@ Maybe do these at some point (or at least convert them to issues):
 
 * link to discogs search
 * image carousel
+* update page `<title>`
 * blocklist for dumb items
 * recent past plays
 * enable https
